@@ -60,7 +60,7 @@ pred = clf.predict(X_train)
 
 print("Accuracy(train): %.2f" % accuracy_score(y_train, pred))
 
-pred = neigh.predict(X_test)
+pred = clf.predict(X_test)
 
 # print("Accuracy(test): %.2f" % accuracy_score(encoder.transform(y_test.ravel()), pred))
 print("Accuracy(test): %.2f" % accuracy_score(y_test, pred))

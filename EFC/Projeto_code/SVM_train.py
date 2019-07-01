@@ -10,6 +10,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from seaborn import color_palette, JointGrid
 from utils import df_to_supervised_classification
+from sklearn.model_selection import train_test_split
+import time
+
 
 filepath = './MHEALTHDATASET/mHealth_subject1.log'
 
@@ -24,11 +27,7 @@ data.columns = ['acc_chest_x', 'acc_chest_y', 'acc_chest_z',
                 'magneto_rig_arm_x', 'magneto_rig_arm_y', 'magneto_rig_arm_z',
                 'label']
 
-# print(data.head())
-# X = data[:].drop('label',axis=1)
-# Y = data['label']
 
-from sklearn.model_selection import train_test_split
 
 df = df_to_supervised_classification(data[:], 'label', 2, 1)
 
@@ -36,26 +35,23 @@ print(df.shape)
 
 X = df[:].drop('label',axis=1)
 Y = df['label']
-# print(X.head())
-
 
 X_train, X_test, y_train, y_test = train_test_split(
     X, Y,
-    test_size=0.9,
+    test_size=0.3,
 #    test_size=0.33, 
     random_state=333, stratify=Y)
-print(X_train.shape)
+#print(X_train.shape)
 #print(Y.shape)
 
 
 #from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
-from sklearn.metrics import confusion_matrix, accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
 from sklearn.preprocessing import StandardScaler
 
 scaler = StandardScaler()
 scaler.fit(X_train)
-
 
 X_train = scaler.transform(X_train)
 X_test = scaler.transform(X_test)
@@ -68,20 +64,26 @@ X_test = scaler.transform(X_test)
 
 # SVM
 clf = SVC(gamma='auto', 
-          kernel='linear', 
-          #kernel='rbf',
-          max_iter=100000,
+#          kernel='linear', 
+          kernel='rbf',
+          max_iter=200000,
           verbose=True)
 
 
-
+start = time.time()
 clf.fit(X_train, y_train.ravel())
+end = time.time()
+print("Training period: %.6f"%(end-start))
+
 
 pred = clf.predict(X_train)
 
 print("Accuracy(train): %.2f" % accuracy_score(y_train, pred))
 
+start = time.time()
 pred = clf.predict(X_test)
+end = time.time()
+print("Prediction period: %.6f"%(end-start))
 
 # print("Accuracy(test): %.2f" % accuracy_score(encoder.transform(y_test.ravel()), pred))
 print("Accuracy(test): %.2f" % accuracy_score(y_test, pred))

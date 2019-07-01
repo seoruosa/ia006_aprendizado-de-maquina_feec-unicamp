@@ -109,10 +109,13 @@ def train_test_sup_classification(filepath, columns_name, n_in, test_size_):
     
     data = pd.read_csv(filepath, sep='\t', skipinitialspace=True, header=None) #parse_dates=[0]
     data.columns = columns_name
+    data = data[data['label']!=0]
     
     df = df_to_supervised_classification(data[:], 'label', n_in, 1)
     
+    
     print(df.shape)
+    
     
     X = df[:].drop('label',axis=1)
     Y = df['label']
@@ -244,7 +247,7 @@ def decision_tree_model_train_test(X_train, X_test, y_train, y_test, max_depth_)
 
 def test_over_volunteers(clf_name, columns_name, n_in, scaler, clf):
     print("Tests over volunteers using model %s"%clf_name)
-    filepath = lambda x: "./MHEALTHDATASET/mHealth_subject%d.log"%x
+    filepath = lambda x: "../MHEALTHDATASET/mHealth_subject%d.log"%x
     
     #if 'testes' not in vars() or 'testes' in globals():
     
@@ -253,7 +256,7 @@ def test_over_volunteers(clf_name, columns_name, n_in, scaler, clf):
 #        print(filepath(i))
         data = pd.read_csv(filepath(i), sep='\t', skipinitialspace=True, header=None) #parse_dates=[0]
         data.columns = columns_name
-        
+        data = data[data['label']!=0]
         
         df = df_to_supervised_classification(data[:], 'label', n_in, 1)
         
